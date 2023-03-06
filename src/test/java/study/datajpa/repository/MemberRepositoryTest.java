@@ -76,4 +76,13 @@ class MemberRepositoryTest {
 
         assertThat(member2).isEqualTo(findMember.get(0));
     }
+
+    @Test
+    public void findByUsername() {
+        Member member = new Member("member1");
+        memberRepository.save(member);
+        List<Member> list = memberRepository.findByUsername("member1");
+
+        assertThat(member).isEqualTo(list.get(0));
+    }
 }

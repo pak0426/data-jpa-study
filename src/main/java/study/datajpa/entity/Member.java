@@ -1,7 +1,6 @@
 package study.datajpa.entity;
 
 import lombok.*;
-import org.springframework.data.util.Lazy;
 
 import javax.persistence.*;
 
@@ -9,6 +8,10 @@ import javax.persistence.*;
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "username", "age"})
+@NamedQuery(
+        name = "Member.findByName",
+        query= "select m from Member m where m.username = :username"
+)
 public class Member {
 
     @Id @GeneratedValue
