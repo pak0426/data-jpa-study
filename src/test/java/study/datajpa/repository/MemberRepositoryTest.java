@@ -10,6 +10,7 @@ import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -139,5 +140,22 @@ class MemberRepositoryTest {
         for(Member row : list) {
             System.out.println("row = " + row);
         }
+    }
+
+    @Test
+    public void returnType() {
+        Member m1 = new Member("member1", 11);
+        Member m2 = new Member("member2", 11);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> aaa = memberRepository.findListByUsername("AAA");
+
+        Member bbb = memberRepository.findMemberByUsername("BBB");
+
+        Optional<Member> ccc = memberRepository.findOptionalByUsername("CCC");
+        
+        //JPA는 nullPointException이 발생하지 않는다.
+        //따라서 null 체크를 하는게 쓸모 없는 코드임
     }
 }

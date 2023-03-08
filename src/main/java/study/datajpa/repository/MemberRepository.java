@@ -8,6 +8,7 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 //ctrl + p = 파라미터 뭐가 들어가는지 나옴
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -27,5 +28,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    List<Member> findListByUsername(String username); //컬렉션
+    Member findMemberByUsername(String username); //단건
+    Optional<Member> findOptionalByUsername(String username); //단건 Optional
 
 }
