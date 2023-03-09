@@ -3,6 +3,9 @@ package study.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -157,5 +160,48 @@ class MemberRepositoryTest {
         
         //JPA는 nullPointException이 발생하지 않는다.
         //따라서 null 체크를 하는게 쓸모 없는 코드임
+    }
+
+    @Test
+    public void findByPage() {
+        //given
+        Member memberA = new Member("aa", 10);
+        Member memberB = new Member("bb", 12);
+        Member memberC = new Member("cc", 10);
+        Member memberD = new Member("dd", 10);
+        Member memberE = new Member("ee", 10);
+        Member memberF = new Member("ff", 15);
+
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+        memberRepository.save(memberC);
+        memberRepository.save(memberD);
+        memberRepository.save(memberE);
+        memberRepository.save(memberF);
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+        //size 0 index임
+
+        //when (offset : 건너뛰고 셈, limit : 몇개 제한)
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        //then
+        List<Member> members = page.getContent();
+        long totalElements = page.getTotalElements();
+
+        for(Member row : members) {
+            System.out.println("row = " + row);
+        }
+        System.out.println("totalElements = " + totalElements);
+        System.out.println(members.size());
+        System.out.println(page.getTotalElements());
+
+        assertThat(members.size()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(4);
+        assertThat(page.getNumber()).isEqualTo(0);
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
     }
 }
