@@ -86,4 +86,33 @@ class MemberJpaRepositoryTest {
 
         assertThat(member).isEqualTo(list.get(0));
     }
+
+    @Test
+    public void findByPage() {
+        //given
+        Member memberA = new Member("aa", 10);
+        Member memberB = new Member("bb", 12);
+        Member memberC = new Member("cc", 10);
+        Member memberD = new Member("dd", 10);
+        Member memberE = new Member("ee", 10);
+        Member memberF = new Member("ff", 15);
+
+        memberJpaRepository.save(memberA);
+        memberJpaRepository.save(memberB);
+        memberJpaRepository.save(memberC);
+        memberJpaRepository.save(memberD);
+        memberJpaRepository.save(memberE);
+        memberJpaRepository.save(memberF);
+
+        //when (offset : 건너뛰고 셈, limit : 몇개 제한)
+        List<Member> members = memberJpaRepository.findByPage(10, 2, 10);
+        Long totalCount = memberJpaRepository.totalCount(10);
+
+        for(Member row : members) {
+            System.out.println("row = " + row);
+        }
+        System.out.println("totalCount = " + totalCount);
+
+
+    }
 }
