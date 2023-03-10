@@ -112,7 +112,21 @@ class MemberJpaRepositoryTest {
             System.out.println("row = " + row);
         }
         System.out.println("totalCount = " + totalCount);
+    }
 
+    @Test
+    public void bulkUpdate() {
+        //given
+        memberJpaRepository.save(new Member("member1", 10));
+        memberJpaRepository.save(new Member("member2", 12));
+        memberJpaRepository.save(new Member("member3", 20));
+        memberJpaRepository.save(new Member("member4", 35));
+        memberJpaRepository.save(new Member("member5", 40));
+        memberJpaRepository.save(new Member("member6", 17));
 
+        //when
+        int resultCount = memberJpaRepository.bulkAgePlus(20);
+
+        assertThat(resultCount).isEqualTo(3);
     }
 }
