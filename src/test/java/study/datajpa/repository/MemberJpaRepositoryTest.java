@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @Rollback(value = false)
 class MemberJpaRepositoryTest {
-
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
+    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired TeamRepository teamRepository;
+    @Autowired EntityManager em;
 
     @Test
     public void MemberTest() {
@@ -66,6 +67,7 @@ class MemberJpaRepositoryTest {
         memberJpaRepository.save(member3);
         member3.setUsername("member!!!!!!");
     }
+
 
     @Test
     public void findByUsernameAndAgeGreaterThen() {

@@ -13,7 +13,6 @@ import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -235,6 +234,52 @@ class MemberRepositoryTest {
         System.out.println("member = " + member);
 
         assertThat(resultCount).isEqualTo(3);
+    }
+
+    @Test
+    public void findMemberLazy() {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 10, teamB);
+        Member member3 = new Member("member2", 10, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        em.flush();
+        em.clear();
+
+        //when N(team 쿼리) + 1(member 쿼리)
+//        List<Member> members = memberRepository.findAll(); //select member 1번만
+//        List<Member> members = memberRepository.findMemberFetchJoin(); //fetch join을 하면 가짜 Proxy 객체를 담고있지 않는다.
+        List<Member> members = memberRepository.findEntityGraphByUsername("member2");
+
+        //fetch join으로 member만 조회를 했으니 member 쿼리 1번만 나가고 Team에 대한 내용은 Proxy라는 가짜객체
+        //실제로 Team을 조회하게 된다면 실제 클래스를 가져온다
+
+        /*
+        JPA(Java Persistence API)에서 프록시(Proxy) 객체는 엔티티(Entity)를 지연 로딩(Lazy Loading)하기 위해 사용됩니다.
+        지연 로딩은 엔티티 객체가 실제로 사용될 때까지 데이터베이스에서 로딩을 지연시키는 방법입니다. 이를 통해 성능을 최적화할 수 있습니다. 예를 들어,
+        엔티티 객체가 N:1 관계를 가지고 있을 때, 대상 엔티티를 로딩하지 않고도 참조할 수 있습니다.
+        JPA에서 프록시 객체는 엔티티 객체를 상속받아 생성됩니다. 이 프록시 객체는 엔티티 객체와 동일한 인터페이스를 제공하며,
+        실제 데이터베이스 로딩이 필요한 시점까지는 엔티티 객체 대신 프록시 객체를 사용합니다.
+        프록시 객체를 사용할 때는 주의해야 할 점이 있습니다. 예를 들어, 프록시 객체의 toString() 메서드나 equals() 메서드를 사용하면,
+        프록시 객체가 초기화되어 버그가 발생할 수 있습니다. 이를 방지하기 위해서는 프록시 객체의 실제 엔티티 객체를 로딩하는 Hibernate.initialize() 메서드를 호출하거나,
+        instanceof 연산자를 사용하여 프록시 객체인지 확인한 후, 필요에 따라 엔티티 객체를 직접 사용하는 것이 좋습니다.
+        따라서, JPA에서 프록시 객체는 지연 로딩을 위한 유용한 도구이지만, 사용 방법을 잘 이해하고 주의해서 사용해야 합니다.
+         */
+
+        for (Member member : members) {
+            System.out.println("member name = " + member.getUsername());
+            System.out.println("member team class = " + member.getTeam().getClass());
+            System.out.println("team name = " + member.getTeam().getName()); //select team 2번
+        }
+
+        //then
     }
 
 
