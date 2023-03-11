@@ -42,7 +42,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     //JPA에게 데이터베이스를 수정하는 메소드임을 나타내는 어노테이션
     //사용하지 않으면 select 쿼리가 날라감
-    @Modifying
+    @Modifying(clearAutomatically = true) //쿼리 실행 후 자동으로 em.clear() 자동으로 영속성 컨텍스트가 클리어가 된다.
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
 }

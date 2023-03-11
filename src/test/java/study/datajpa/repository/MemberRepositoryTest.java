@@ -12,6 +12,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,7 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @Autowired EntityManager em;
 
     @Test
     public void saveMember() {
@@ -220,11 +223,16 @@ class MemberRepositoryTest {
 
         //when
         int resultCount = memberRepository.bulkAgePlus(20);
+        em.flush();
+        em.clear();
+
+        //entityManager.flush() 메소드를 호출하여 변경 사항을 즉시 데이터베이스에 반영할 수 있습니다.
+        //entityManager.clear() 메소드를 호출하면, 영속성 컨텍스트에서 관리하는 모든 엔티티를 분리하고, 캐시를 비웁니다.
+        //이렇게 하면 모든 변경 사항이 롤백되고, 모든 엔티티가 새로운 상태로 로드됩니다.
 
         List<Member> members = memberRepository.findByUsername("member5");
-        Member member = members.get(0); //영속성 컨텍스트내에서는 아직 40살임
+        Member member = members.get(0); //em.flush(), em.clear 하기 전엔 영속성 컨텍스트내에서는 아직 40살임
         System.out.println("member = " + member);
-
 
         assertThat(resultCount).isEqualTo(3);
     }
