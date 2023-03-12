@@ -273,14 +273,47 @@ class MemberRepositoryTest {
         따라서, JPA에서 프록시 객체는 지연 로딩을 위한 유용한 도구이지만, 사용 방법을 잘 이해하고 주의해서 사용해야 합니다.
          */
 
+        //then
         for (Member member : members) {
             System.out.println("member name = " + member.getUsername());
             System.out.println("member team class = " + member.getTeam().getClass());
             System.out.println("team name = " + member.getTeam().getName()); //select team 2번
         }
 
-        //then
     }
 
+    @Test
+    public void queryHint() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        //when
+        //1. findMember 객체의 영속성 컨텍스트가 변경되므로 쿼리가 찍힘
+        Member findMember = memberRepository.findById(member1.getId()).get();
+        findMember.setUsername("member2");
+
+//        2. findMember 객체의 영속성 컨텍스트가 변경되지만 queryHint가 readOnly이므로 update 쿼리가 안찍힘
+        Member findMemberReadOnly = memberRepository.findReadOnlyByUsername("member1");
+        findMemberReadOnly.setUsername("member2");
+
+        em.flush();
+    }
+
+    @Test
+    public void findLockByUsername() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        List<Member> members = memberRepository.findLockByUsername("member1");
+    }
+
+    @Test
+    public void callCustom() {
+        List<Member> result = memberRepository.findMemberCustom();
+    }
 
 }
