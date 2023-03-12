@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,8 +18,8 @@ import java.util.List;
 @Rollback(value = false)
 class MemberTest {
 
-    @PersistenceContext
-    EntityManager em;
+    @PersistenceContext EntityManager em;
+    @Autowired MemberRepository memberRepository;
 
     @Test
     public void test() {
@@ -46,5 +47,29 @@ class MemberTest {
             System.out.println("member : " + member);
             System.out.println("-> member.team : " + member.getTeam());
         }
+    }
+
+    @Test
+    public void jpaEventBaseEntity() throws Exception {
+        //given
+        Member member1 = new Member("member1", 10);
+
+        memberRepository.save(member1); //@PrePersist
+
+        Thread.sleep(100);
+        member1.setUsername("member11"); //@PreUpdate
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member findMember = memberRepository.findById(member1.getId()).get();
+
+        //then
+        System.out.println("findMember = " + findMember);
+        System.out.println("getCreateDate = " + findMember.getCreateDate());
+        System.out.println("getLastModifiedDate = " + findMember.getLastModifiedDate());
+        System.out.println("getCreateBy = " + findMember.getCreateBy());
+        System.out.println("getLastModifiedDate = " + findMember.getLastModifiedDate());
     }
 }
