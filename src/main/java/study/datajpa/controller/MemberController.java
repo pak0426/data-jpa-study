@@ -39,7 +39,7 @@ public class MemberController {
         return members.map(MemberDto::new);
     }
 
-    @PostConstruct //초기화 작업을 수행하기 위해 메서드에 지정할 수 있습니다.
+//    @PostConstruct //초기화 작업을 수행하기 위해 메서드에 지정할 수 있습니다.
     public void init() {
         for (int i=0; i< 100; i++) {
             memberRepository.save(new Member("user" + i, i));
