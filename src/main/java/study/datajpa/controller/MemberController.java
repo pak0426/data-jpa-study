@@ -35,7 +35,8 @@ public class MemberController {
     @GetMapping("/members")
     public Page<MemberDto> list(@PageableDefault(size = 5, sort = "username") Pageable pageable) {
         Page<Member> members = memberRepository.findAll(pageable);
-        return members.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+//        return members.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+        return members.map(MemberDto::new);
     }
 
     @PostConstruct //초기화 작업을 수행하기 위해 메서드에 지정할 수 있습니다.
