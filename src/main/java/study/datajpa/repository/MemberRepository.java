@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 //ctrl + p = 파라미터 뭐가 들어가는지 나옴
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
     List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
     //    @Query(name = "Member.findByUsername")
