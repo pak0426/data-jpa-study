@@ -370,4 +370,35 @@ class MemberRepositoryTest {
         assertThat(result.get(0).getUsername()).isEqualTo("m1");
     }
 
+    @Test
+    public void queryByExample2() {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        em.persist(teamA);
+        em.persist(teamB);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        Member m3 = new Member("m3", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+        em.persist(m3);
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member member = new Member("m2");
+        Team team = new Team("teamA"); //where
+        member.setTeam(team); //team inner join & where
+
+        Example<Member> example = Example.of(member);
+
+        List<Member> result = memberRepository.findAll(example);
+
+        //then
+        assertThat(result.get(0).getUsername()).isEqualTo("m1");
+    }
+
 }
