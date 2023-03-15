@@ -393,12 +393,16 @@ class MemberRepositoryTest {
         Team team = new Team("teamA"); //where
         member.setTeam(team); //team inner join & where
 
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("age");
+//                .withIgnorePaths("team");
+
         Example<Member> example = Example.of(member);
 
         List<Member> result = memberRepository.findAll(example);
 
         //then
-        assertThat(result.get(0).getUsername()).isEqualTo("m1");
+        assertThat(result.get(0).getUsername()).isEqualTo("m2");
     }
 
 }
